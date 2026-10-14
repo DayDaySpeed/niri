@@ -1,0 +1,10 @@
+# 本机私有 (不入库): 密钥、个人工具路径; 由 ~/.zshrc 加载
+# ./setup.sh deploy 在 ~/.config/zsh/local.zsh 不存在时复制本文件过去, 再按需填写; 也可以直接从旧电脑拷 local.zsh
+# export PATH="$HOME/.local/share/npm/bin:$PATH"
+# export JAVA_HOME=/usr/lib/jvm/default
+# export ANDROID_HOME=$HOME/Android/Sdk
+# export ANDROID_SDK_ROOT=$ANDROID_HOME
+#
+# myclaude() {
+#   ANTHROPIC_BASE_URL=... ANTHROPIC_AUTH_TOKEN=... claude "$@"
+# }

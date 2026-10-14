@@ -1,0 +1,10 @@
+# 桌面必需 (AUR), ./setup.sh deps 用 yay 安装
+niri-shorin-fork-git                    # 作者的 niri 分支 (网格总览等); 和官方 niri 冲突, yay 问是否移除 niri 时选 y
+shorin-contrib-git                      # 作者的小工具: quicksave / quickload (Mod+F5 / F8, 需要 btrfs + snapper)、shorin 命令
+shorin-screenrec-menu-git               # waybar 录屏按钮 (区域 / 全屏录制菜单)
+nirius                                  # niri 辅助命令 (快捷键里的聚焦、跟随、scratchpad)
+cliphist-tui-git                        # 剪贴板历史 TUI
+waypaper                                # 壁纸选择器 (启动时随机一张, 换壁纸后 matugen 取色)
+ttf-lxgw-wenkai-screen                  # waybar 中文字体
+ttf-jetbrains-maple-mono-nf-xx-xx       # kitty 字体 JetBrains Maple Mono
+rime-ice-git rime-wanxiang-gram-zh-hans # 雾凇拼音 + 万象语法模型

@@ -1,0 +1,14 @@
+{
+    "window.commandCenter": true,
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'Noto Sans CJK SC', monospace",
+    "editor.fontSize": 16,
+    "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font Mono', 'Noto Sans CJK SC', monospace",
+    "files.autoSave": "onFocusChange",
+    "git.openRepositoryInParentFolders": "always",
+    "window.menuBarVisibility": "compact",
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "jupyter.askForKernelRestart": false,
+    "window.autoDetectColorScheme": false,
+    "explorer.confirmPasteNative": false
+}

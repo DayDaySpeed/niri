@@ -1,0 +1,47 @@
+# 桌面必需 (官方仓库), ./setup.sh deps 用 pacman 安装; 去掉注释, 每行可写多个包
+# niri 本体用作者的分支, 在 core-aur.txt 里 (官方 niri 跑不了这套配置)
+
+# --- 系统基础 / 音频 / 网络 / 蓝牙 ---
+pipewire pipewire-pulse pipewire-alsa wireplumber alsa-utils sof-firmware pavucontrol
+networkmanager bluez bluez-utils
+gnome-keyring                           # 浏览器 / VSCode 保存登录状态
+xdg-user-dirs                           # ~/Desktop ~/Downloads 等目录
+
+# --- 会话基础 ---
+xwayland-satellite                      # X11 程序 (Steam 等) 走 XWayland
+xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk   # 截图录屏 / 文件选择框
+polkit-gnome                            # 图形化提权弹窗
+qt5-wayland qt6-wayland                 # Qt 程序原生 Wayland
+xorg-xhost                              # config.kdl 里允许 root 用 XWayland
+
+# --- 桌面组件 (配置里启动或绑了快捷键) ---
+waybar mako fuzzel                      # 状态栏、通知、启动器
+swayidle hyprlock                       # 空闲锁屏
+swayosd brightnessctl playerctl         # 音量 / 亮度 OSD 和媒体键
+awww                                    # 壁纸 (带切换动画)
+wlsunset                                # 护眼色温
+hyprpicker grim slurp satty             # 取色、截图、标注
+wl-clipboard cliphist                   # 剪贴板历史
+cava                                    # waybar 里的音频可视化
+matugen adw-gtk-theme breeze-cursors    # 按壁纸取色、GTK 主题、光标
+network-manager-applet bluetui pacman-contrib   # waybar 按钮: 网络设置、蓝牙、检查更新
+libnotify xdg-terminal-exec
+python                                  # niri-tag、快速跳转窗口等脚本
+nautilus pcmanfm thunar                 # 文件管理器 (Super+E 等快捷键)
+translate-shell                         # Super+Y 翻译 (~/.local/bin/translate.sh)
+
+# --- 终端 / shell ---
+kitty zsh starship
+zsh-autosuggestions zsh-syntax-highlighting # fish 式灰字建议和语法高亮 (~/.config/zsh/zshrc)
+fish eza zoxide bat                     # 作者的 fish 配置用到; 想试 fish 时直接输入 fish
+
+# --- 命令行工具 ---
+git git-lfs github-cli neovim
+btop fastfetch yazi ranger ripgrep fd fzf jq unzip zip rsync wget
+
+# --- 字体 ---
+otf-font-awesome ttf-0xproto-nerd ttf-jetbrains-mono-nerd   # waybar 图标
+noto-fonts noto-fonts-cjk noto-fonts-emoji
+
+# --- 输入法 (配置在 dotfiles/.config/fcitx5 和 .local/share/fcitx5/rime) ---
+fcitx5 fcitx5-chinese-addons fcitx5-gtk fcitx5-qt fcitx5-configtool fcitx5-rime

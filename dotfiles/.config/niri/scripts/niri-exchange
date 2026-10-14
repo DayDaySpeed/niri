@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# 仿 dwm 的 exchange_client (Super+Shift+H/J/K/L): niri-exchange <left|right|up|down>
+#   平铺窗口: 和该方向相邻的窗口交换; 到最边上一列就移到另一屏, 到列顶 / 列底就移到相邻工作区
+#   浮动窗口: left/right 贴左/右半屏, up 铺满, down 缩回 2/3 大小并居中
+dir=$1
+
+# edge: 平铺窗口在第一列为 first, 最后一列为 last, 只有一列为 both
+read -r id floating fullscreen edge < <(niri msg -j windows | python3 -c '
+import json, sys
+ws = json.load(sys.stdin)
+f = next((w for w in ws if w["is_focused"]), None)
+if f:
+    edge = "-"
+    pos = f["layout"]["pos_in_scrolling_layout"]
+    if pos:
+        cols = [w["layout"]["pos_in_scrolling_layout"][0] for w in ws
+                if w["workspace_id"] == f["workspace_id"] and w["layout"]["pos_in_scrolling_layout"]]
+        first, last = pos[0] == 1, pos[0] == max(cols)
+        edge = "both" if first and last else "first" if first else "last" if last else "-"
+    print(f["id"], int(f["is_floating"]), int(bool(f.get("is_fullscreen"))), edge)
+')
+[ -z "$id" ] || [ "$fullscreen" = 1 ] && exit
+
+if [ "$floating" = 0 ]; then
+    # 在最边上一列时没有可交换的邻居, 就把窗口送到那一侧的显示器; 列顶 / 列底时送到相邻工作区
+    case $dir in
+        left)  case $edge in first|both) niri msg action move-window-to-monitor-left ;;
+                                      *) niri msg action swap-window-left ;; esac ;;
+        right) case $edge in last|both)  niri msg action move-window-to-monitor-right ;;
+                                      *) niri msg action swap-window-right ;; esac ;;
+        up)    niri msg action move-window-up-or-to-workspace-up ;;
+        down)  niri msg action move-window-down-or-to-workspace-down ;;
+    esac
+    exit
+fi
+
+# 浮动窗口: 大小和位置都按工作区百分比一次给出, niri 让缩放和移动同时动画;
+# 不等客户端按新大小提交再挪, 否则先缩放、停一下、再移动, 看着一顿一顿的
+place() { # 宽 高 x y
+    niri msg action set-window-width --id "$id" "$1"
+    niri msg action set-window-height --id "$id" "$2"
+    niri msg action move-floating-window --id "$id" -x "$3" -y "$4"
+}
+
+case $dir in
+    left)  place 50% 100% 0% 0% ;;
+    right) place 50% 100% 50% 0% ;;
+    up)    place 100% 100% 0% 0% ;;
+    down)  place 66.667% 66.667% 16.667% 16.667% ;;
+esac

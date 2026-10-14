@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Super+P 菜单: dwm 的 bin/rofi.sh 的 niri 版, 按当前状态显示开 / 关
+DWM=~/.config/dwm2
+# niri 不提供触摸板状态查询, 自己记: 文件内容是禁用时的 niri socket, niri 重启后自然失效 (重启后触摸板恢复启用)
+TOUCHPAD_OFF=${XDG_CACHE_HOME:-$HOME/.cache}/niri-touchpad-off
+touchpad_off() { [ "$(cat "$TOUCHPAD_OFF" 2>/dev/null)" = "$NIRI_SOCKET" ]; }
+
+call_menu() {
+    pgrep -x wlsunset >/dev/null && echo '󰖔 close night light' || echo '󰖔 open night light'
+    makoctl mode | grep -qx do-not-disturb && echo '󰂛 close do not disturb' || echo '󰂛 open do not disturb'
+    pgrep -x swayidle >/dev/null && echo '󰌿 pause auto lock' || echo '󰌾 resume auto lock'
+    touchpad_off && echo '󰟸 enable touchpad' || echo '󰟸 disable touchpad'
+    [ "$($DWM/bin/powersave.sh status)" = on ] && echo '󰌪 close power save' || echo '󰌪 open power save'
+    echo ' choose wallpaper'
+    echo ' random wallpaper'
+    echo '󰕞 update statusbar'
+    pgrep -x sunshine >/dev/null && echo '󱒃 close sunshine' || echo '󱒃 open sunshine'
+    echo '󰈈 pick window info'
+}
+
+execute_menu() {
+    case $1 in
+        '󰖔 open night light'|'󰖔 close night light')
+            ~/.local/bin/toggle-wlsunset ;;
+        '󰂛 open do not disturb'|'󰂛 close do not disturb')
+            makoctl mode -t do-not-disturb >/dev/null
+            makoctl mode | grep -qx do-not-disturb || notify-send -r 9534 "󰂚 勿扰" "已关闭, 通知恢复显示" ;;
+        '󰌿 pause auto lock')
+            pkill -x swayidle; notify-send -r 9535 "󰌿 自动熄屏" "已暂停" ;;
+        '󰌾 resume auto lock')
+            setsid -f ~/.config/niri/scripts/swayidle.sh >/dev/null 2>&1; notify-send -r 9535 "󰌾 自动熄屏" "已恢复" ;;
+        '󰟸 disable touchpad')
+            niri msg action toggle-touchpad && echo "$NIRI_SOCKET" > "$TOUCHPAD_OFF"
+            notify-send -r 9536 "󰟸 触摸板" "已禁用" ;;
+        '󰟸 enable touchpad')
+            niri msg action toggle-touchpad && rm -f "$TOUCHPAD_OFF"
+            notify-send -r 9536 "󰟸 触摸板" "已启用" ;;
+        '󰌪 open power save'|'󰌪 close power save')
+            $DWM/bin/powersave.sh toggle >/dev/null ;;
+        ' choose wallpaper')
+            waypaper ;;
+        ' random wallpaper')
+            waypaper --random ;;
+        '󰕞 update statusbar')
+            pkill -SIGUSR2 -x waybar ;;
+        '󱒃 open sunshine')
+            $DWM/bin/sunshine.sh start >/dev/null ;;
+        '󱒃 close sunshine')
+            $DWM/bin/sunshine.sh stop >/dev/null ;;
+        '󰈈 pick window info')
+            ~/.config/niri/scripts/niri-pick focus ;;
+    esac
+}
+
+choice=$(call_menu | fuzzel --dmenu --prompt '') && execute_menu "$choice"

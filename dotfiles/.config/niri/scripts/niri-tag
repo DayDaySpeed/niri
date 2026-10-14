@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# 仿 dwm 的应用 tag (TAGKEYS): niri-tag [--output <显示器>] <app-id 正则> <启动命令>
+#   应用已经开着: 跳到它的窗口 (被 Super+I 隐藏了就取消隐藏)
+#   已经聚焦在它上面: 有多个窗口就轮流跳, 只有一个则不动
+#   没开: 跳到当前显示器最下面的空工作区, 在那里启动, 不挤进当前工作区
+# 可选 --output <显示器>: 没开时到这块屏的空工作区启动 (屏不存在则用当前屏)
+output=
+[ "$1" = --output ] && { output=$2; shift 2; }
+re=$1; shift
+cmd=$*
+
+cur=$(niri msg -j workspaces | python3 -c 'import json, sys; print(next(w["id"] for w in json.load(sys.stdin) if w["is_focused"]))')
+
+# 输出: spawn | none | <窗口 id> <是否隐藏 0/1>
+read -r target minimized < <(niri msg -j windows | python3 -c '
+import json, re, sys
+ws = json.load(sys.stdin)
+cur = int(sys.argv[2])
+m = sorted((w for w in ws if re.search(sys.argv[1], w["app_id"] or "")), key=lambda w: w["id"])
+if not m:
+    print("spawn"); sys.exit()
+focused = next((i for i, w in enumerate(m) if w["is_focused"]), None)
+if focused is not None:
+    # 轮换到下一个 (回绕)
+    t = m[(focused + 1) % len(m)]
+    if len(m) == 1:
+        print("none"); sys.exit()
+else:
+    # 优先当前工作区里没隐藏的, 其次最近用过的 (隐藏的也算)
+    t = min(m, key=lambda w: (w["is_minimized"] or w["workspace_id"] != cur,
+                              -(w.get("focus_timestamp") or {}).get("secs", 0)))
+print(t["id"], int(bool(t["is_minimized"])))
+' "$re" "$cur")
+
+case $target in
+    none) exit ;;
+    spawn) ;;
+    *)
+        [ "$minimized" = 1 ] && niri msg action unminimize-window --id "$target"
+        niri msg action focus-window --id "$target"
+        exit ;;
+esac
+
+if [ -n "$output" ] && niri msg -j outputs | python3 -c 'import json, sys; sys.exit(sys.argv[1] not in json.load(sys.stdin))' "$output"; then
+    niri msg action focus-monitor "$output"
+fi
+
+# niri 总在每个显示器的最下面保留一个空工作区
+last=$(niri msg -j workspaces | python3 -c '
+import json, sys
+ws = json.load(sys.stdin)
+out = next(w["output"] for w in ws if w["is_focused"])
+print(max(w["idx"] for w in ws if w["output"] == out))
+')
+niri msg action focus-workspace "$last"
+niri msg action spawn-sh -- "$cmd"

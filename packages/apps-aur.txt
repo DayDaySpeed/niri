@@ -1,0 +1,6 @@
+# 日常应用 (AUR), ./setup.sh --no-apps 跳过; SPlayer 是 AppImage, 由 setup.sh 单独下载
+google-chrome                           # Mod+B, 默认浏览器
+microsoft-edge-stable-bin
+visual-studio-code-bin                  # 扩展见 vscode-extensions.txt
+cursor-bin                              # 扩展见 cursor-extensions.txt
+typora

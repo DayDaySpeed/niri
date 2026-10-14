@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# 仿 dwm 的 togglefloating (Super+T): 聚焦窗口在浮动和平铺之间切换, 变成浮动时总是居中、占工作区 2/3
+# (niri 自带的 toggle-window-floating 会回到上次浮动的位置)
+
+read -r id floating fullscreen < <(niri msg -j windows | python3 -c '
+import json, sys
+f = next((w for w in json.load(sys.stdin) if w["is_focused"]), None)
+if f:
+    print(f["id"], int(f["is_floating"]), int(bool(f.get("is_fullscreen"))))
+')
+[ -z "$id" ] || [ "$fullscreen" = 1 ] && exit
+
+niri msg action toggle-window-floating --id "$id"
+[ "$floating" = 1 ] && exit
+
+# 刚变成浮动: 大小和位置一次给出, 缩放和移动同时动画
+niri msg action set-window-width --id "$id" 66.667%
+niri msg action set-window-height --id "$id" 66.667%
+niri msg action move-floating-window --id "$id" -x 16.667% -y 16.667%

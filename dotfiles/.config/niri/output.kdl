@@ -1,0 +1,10 @@
+// 笔记本 2560x1440 按 135%, 外接 1920x1080 按 100% 放在右边 (1896 = 2560 / 1.35)
+// 名字以 `niri msg outputs` 为准, 改完保存 niri 立即生效
+output "eDP-1" {
+    scale 1.35
+    position x=0 y=0
+}
+output "HDMI-A-1" {
+    scale 1.0
+    position x=1896 y=0
+}

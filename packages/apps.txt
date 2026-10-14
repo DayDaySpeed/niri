@@ -1,0 +1,5 @@
+# 日常应用 (官方仓库), ./setup.sh --no-apps 跳过
+mpv                                     # 视频
+obs-studio                              # Super 快捷键: 录屏
+steam                                   # multilib, ./setup.sh bootstrap 会开启
+libreoffice-fresh

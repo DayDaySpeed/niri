@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Super+S: 仿 dwm togglescratch. 没有 scratchpad 终端就启动并显示, 有就显示 / 收回 (依赖 niriusd)
+ID='^scratchpad$'
+
+has() { niri msg -j windows | grep -q '"app_id": *"scratchpad"'; }
+
+if has; then
+    exec nirius scratchpad-show --app-id "$ID"
+fi
+
+kitty --class scratchpad &
+for _ in $(seq 50); do has && break; sleep 0.1; done
+# 先登记进 scratchpad 再显示, 之后 Super+S 就能收回
+nirius scratchpad-toggle --app-id "$ID" && nirius scratchpad-show --app-id "$ID"

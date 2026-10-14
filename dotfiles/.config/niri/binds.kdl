@@ -1,0 +1,261 @@
+//这个文件是快捷键设置
+// 键位按 dwm (dwm2 仓库的 dwm/config.h) 的习惯来, 两边用同一套肌肉记忆:
+//   super+hjkl 切聚焦, 再加 shift 交换/移动窗口
+//   super+上下 切工作区 (dwm 里切 tag), 再加 shift 把窗口带过去; super+左右 切列
+//   super+ctrl+方向键 移动窗口, super+alt+方向键 调大小
+
+binds {
+    // Keys consist of modifiers separated by + signs, followed by an XKB key name
+    // in the end. To find an XKB name for a particular key, you may use a program
+    // like wev.
+    //
+    // "Mod" is a special modifier equal to Super when running on a TTY, and to Alt
+    // when running as a winit window.
+    // Most actions that you can bind here can also be invoked programmatically with
+    // `niri msg action do-something`.
+
+    // ======================== 和 dwm 一致的部分 ========================
+
+    // 快捷键速查
+    Mod+Shift+Slash hotkey-overlay-title="快捷键速查 Keybind tutorial" { spawn "~/.config/niri/scripts/niri-binds"; }
+
+    // 切换聚焦: super+vim key (同 dwm focusdir)
+    Mod+H hotkey-overlay-title="聚焦左边的列 (到边换屏) Focus left" { focus-column-or-monitor-left; }
+    Mod+J     { focus-window-or-workspace-down; }
+    Mod+K     { focus-window-or-workspace-up; }
+    Mod+L hotkey-overlay-title="聚焦右边的列 (到边换屏) Focus right" { focus-column-or-monitor-right; }
+    // super+shift+vim key (同 dwm exchange_client): 平铺时和该方向相邻的窗口交换;
+    // 浮动时 h/l 贴左/右半屏, k 铺满, j 缩回 2/3 大小并居中
+    Mod+Shift+H hotkey-overlay-title="向左交换 / 贴左半屏 Swap left / snap left" { spawn "~/.config/niri/scripts/niri-exchange" "left"; }
+    Mod+Shift+J hotkey-overlay-title="向下交换 / 缩回居中 Swap down / center" { spawn "~/.config/niri/scripts/niri-exchange" "down"; }
+    Mod+Shift+K hotkey-overlay-title="向上交换 / 铺满 Swap up / fill" { spawn "~/.config/niri/scripts/niri-exchange" "up"; }
+    Mod+Shift+L hotkey-overlay-title="向右交换 / 贴右半屏 Swap right / snap right" { spawn "~/.config/niri/scripts/niri-exchange" "right"; }
+
+    // super+左右: 切换聚焦的列, 到最边上一列再按就换显示器 (同 super+h/l)
+    Mod+Left  { focus-column-or-monitor-left; }
+    Mod+Right { focus-column-or-monitor-right; }
+    // super+shift+左右: 同 super+shift+h/l
+    Mod+Shift+Left  { spawn "~/.config/niri/scripts/niri-exchange" "left"; }
+    Mod+Shift+Right { spawn "~/.config/niri/scripts/niri-exchange" "right"; }
+    // super+上下: 切工作区 (niri 的工作区是上下排的, 对应 dwm 切 tag)
+    Mod+Up   hotkey-overlay-title="上一个工作区 Previous workspace" { focus-workspace-up; }
+    Mod+Down hotkey-overlay-title="下一个工作区 Next workspace" { focus-workspace-down; }
+    // super+shift+上下: 把窗口带到相邻工作区 (对应 dwm tagtoleft / tagtoright)
+    Mod+Shift+Up   hotkey-overlay-title="窗口移到上一个工作区 Move to previous workspace" { move-column-to-workspace-up; }
+    Mod+Shift+Down hotkey-overlay-title="窗口移到下一个工作区 Move to next workspace" { move-column-to-workspace-down; }
+    // super+=: 浮动层/平铺层来回切 (同 dwm toggletoplayer)
+    Mod+Equal hotkey-overlay-title="浮动/平铺层切换 Toggle floating/tiling focus" { switch-focus-between-floating-and-tiling; }
+
+    // super+tab: 上一个用过的窗口; super+`: 上一个工作区
+    Mod+Tab   hotkey-overlay-title="上一个窗口 Previous window" { focus-window-previous; }
+    Mod+grave hotkey-overlay-title="上一个工作区 Previous workspace" { focus-workspace-previous; }
+    // 带搜索的窗口切换 (带缩略图的切换在 config.kdl 的 recent-windows, 用 alt+tab)
+    Mod+Shift+Tab hotkey-overlay-title="快速跳转窗口 Quick window switch menu" { spawn "~/.config/niri/scripts/niri-quick-switch-fuzzel.py"; }
+
+    // super+ctrl+方向键: 移动窗口 (同 dwm movewin). 平铺时调换位置 (到边就移到另一屏 / 相邻工作区), 浮动时平移
+    Mod+Ctrl+Left  hotkey-overlay-title="移动窗口 (到边换屏/换工作区) Move window" { move-column-left-or-to-monitor-left; }
+    Mod+Ctrl+Right { move-column-right-or-to-monitor-right; }
+    Mod+Ctrl+Up    { move-window-up-or-to-workspace-up; }
+    Mod+Ctrl+Down  { move-window-down-or-to-workspace-down; }
+    // super+alt+方向键: 调整窗口大小 (同 dwm resizewin)
+    Mod+Alt+Left  hotkey-overlay-title="调整窗口大小 Resize window" { set-column-width "-5%"; }
+    Mod+Alt+Right { set-column-width "+5%"; }
+    Mod+Alt+Up    { set-window-height "-5%"; }
+    Mod+Alt+Down  { set-window-height "+5%"; }
+    // super+逗号/句号: 缩小/放大当前列 (同 dwm setmfact)
+    Mod+Comma  hotkey-overlay-title="缩小列宽 Shrink column" { set-column-width "-5%"; }
+    Mod+Period hotkey-overlay-title="放大列宽 Grow column" { set-column-width "+5%"; }
+
+    // super+shift+回车: 当前列放到最前 (同 dwm zoom)
+    Mod+Shift+Return hotkey-overlay-title="列移到最前 Move column to first" { move-column-to-first; }
+    // super+e: 把窗口并入左边的列 / 从列里踢出 (对应 dwm 改主区窗口数)
+    Mod+E hotkey-overlay-title="并入/踢出列 Consume or expel window" { consume-or-expel-window-left; }
+
+    // super+b: 切到另一个显示器; 加 shift 把窗口带过去; 再加 alt 把整个工作区带过去 (同 dwm focusmon / tagmon)
+    Mod+B hotkey-overlay-title="切换显示器 Focus next monitor" { focus-monitor-next; }
+    Mod+Shift+B hotkey-overlay-title="窗口移到另一个显示器 Move to next monitor" { move-column-to-monitor-next; }
+    Mod+Shift+Alt+B hotkey-overlay-title="工作区移到另一个显示器 Move workspace to next monitor" { move-workspace-to-monitor-next; }
+
+    // 工作区起名 (直接回车则取消名字, Esc 不改) / 上下调整顺序. 起了名的工作区空了也会保留
+    Mod+Alt+N hotkey-overlay-title="工作区起名 Name workspace" { spawn-sh "n=$(fuzzel --dmenu --prompt-only '工作区名: ') || exit; if [ -n \"$n\" ]; then niri msg action set-workspace-name \"$n\"; else niri msg action unset-workspace-name; fi"; }
+    Mod+Ctrl+Shift+Up   hotkey-overlay-title="工作区上移 Move workspace up" { move-workspace-up; }
+    Mod+Ctrl+Shift+Down hotkey-overlay-title="工作区下移 Move workspace down" { move-workspace-down; }
+    Mod+Ctrl+Shift+K    { move-workspace-up; }
+    Mod+Ctrl+Shift+J    { move-workspace-down; }
+
+    // 动态共享目标: OBS / 会议里选一次 "niri Dynamic Cast Target", 之后用这三个键切换共享内容
+    Mod+Alt+C hotkey-overlay-title="共享当前窗口 Cast window" { set-dynamic-cast-window; }
+    Mod+Alt+Shift+C hotkey-overlay-title="共享当前显示器 Cast monitor" { set-dynamic-cast-monitor; }
+    Mod+Alt+X hotkey-overlay-title="暂停共享 Clear cast target" { clear-dynamic-cast-target; }
+
+    // 窗口状态
+    Mod+Q hotkey-overlay-title="关闭窗口 Close window" repeat=false { close-window; }
+    Mod+Ctrl+Q hotkey-overlay-title="强制关闭窗口 Force kill window" repeat=false { spawn "~/.config/niri/scripts/niri-force-kill-window"; }
+    Mod+T hotkey-overlay-title="切换浮动 (居中) Toggle floating (centered)" { spawn "~/.config/niri/scripts/niri-float-toggle"; }
+    Mod+F hotkey-overlay-title="全屏 Fullscreen" { fullscreen-window; }
+    Mod+O hotkey-overlay-title="最大化列 Maximize column" { maximize-column; }
+    Mod+Space hotkey-overlay-title="标签页模式 Toggle tabbed column" { toggle-column-tabbed-display; }
+    Mod+I hotkey-overlay-title="隐藏窗口 Minimize" { minimize-window; }
+    Mod+Shift+I hotkey-overlay-title="取消隐藏 Unminimize" { unminimize-window; }
+    // 隐藏/显示 waybar (进程不退出)
+    Mod+Shift+F hotkey-overlay-title="开关状态栏 Toggle bar" { spawn-sh "killall -SIGUSR1 waybar"; }
+    // 假全屏: 应用以为自己全屏了, 窗口仍只占自己那一列
+    Mod+Alt+F hotkey-overlay-title="窗口内全屏 Windowed fullscreen" { toggle-windowed-fullscreen; }
+    // 临时取消窗口规则里的透明度 (dwm 的 super+u 是开关边框, 同属外观开关)
+    Mod+U hotkey-overlay-title="开关透明 Toggle opacity" { toggle-window-rule-opacity; }
+
+    // 总览: super+a 窗口网格 (同 dwm overview), super+z 工作区总览 (对应 dwm 星系)
+    Mod+A hotkey-overlay-title="窗口总览 Grid overview" repeat=false { toggle-grid-overview; }
+    Mod+Z hotkey-overlay-title="工作区总览 Overview" repeat=false { toggle-overview; }
+    // 单按 super 不做任何事. 这个 niri fork 在没有单按 super 的绑定时会默认打开窗口网格, 所以要显式绑一个空操作
+    Mod hotkey-overlay-title=null repeat=false { spawn "true"; }
+
+    // 重载配置 / 电源菜单 / 锁屏
+    Mod+Shift+R hotkey-overlay-title="重载配置 Reload config" { spawn "niri" "msg" "action" "load-config-file"; }
+    Mod+Shift+Escape hotkey-overlay-title="电源菜单 Powermenu" { spawn "~/.config/niri/scripts/powermenu"; }
+    Mod+Ctrl+L hotkey-overlay-title="锁屏 Lock screen" { spawn-sh "hyprlock -c ~/.config/niri/hyprlock.conf"; }
+
+    // 启动程序
+    Mod+S hotkey-overlay-title="scratchpad 终端 Scratchpad" { spawn "~/.config/niri/scripts/scratchpad"; }
+    Mod+Return hotkey-overlay-title="终端 Terminal" { spawn "kitty"; }
+    Mod+Minus hotkey-overlay-title="浮动终端 Quick Terminal" { spawn "kitty" "--single-instance" "--class" "quickterminal"; }
+    Mod+R hotkey-overlay-title="打开/关闭文件管理器 Filemanager" { spawn-sh "killall pcmanfm || pcmanfm"; }
+    Mod+D hotkey-overlay-title="启动应用 Applauncher" { spawn "fuzzel"; }
+    Mod+Shift+D hotkey-overlay-title="执行命令 Run command" { spawn "fuzzel" "--list-executables-in-path"; }
+    // 同 dwm 的 Super+P 菜单: 夜灯 / 勿扰 / 自动熄屏 / 省电 / 壁纸 / 状态栏 / sunshine / 提取窗口信息
+    Mod+P hotkey-overlay-title="设置菜单 Settings menu" { spawn "~/.config/niri/scripts/menu"; }
+    Mod+Shift+A hotkey-overlay-title="选取区域截图 Select screenshot" { spawn-sh "niri msg action screenshot --show-pointer false && pkill -f -USR1 screenshot-sound.sh"; }
+    Mod+Y hotkey-overlay-title="翻译选中文字 Translate selection" { spawn "~/.local/bin/translate.sh"; }
+    Mod+Shift+Y hotkey-overlay-title="输入文字翻译 Translate input" { spawn "~/.local/bin/translate.sh" "input"; }
+    Mod+X hotkey-overlay-title="剪贴板历史 Clipboard" { spawn-sh "cliphist list | fuzzel --dmenu -p '剪贴板 ' | cliphist decode | wl-copy"; }
+    Mod+N hotkey-overlay-title="重新显示上一条通知 Restore notification" { spawn "makoctl" "restore"; }
+    Mod+Shift+N hotkey-overlay-title="关闭所有通知 Dismiss notifications" { spawn "makoctl" "dismiss" "-a"; }
+
+    // 应用快捷键 (同 dwm 的应用 tag): 跳到该应用所在的工作区, 没开就到最下面的空工作区启动它
+    Mod+C hotkey-overlay-title="Chrome" { spawn "~/.config/niri/scripts/niri-tag" "--output" "HDMI-A-1" "^google-chrome" "google-chrome-stable" "--new-window" "https://www.youtube.com"; }
+    Mod+W hotkey-overlay-title="Edge" { spawn "~/.config/niri/scripts/niri-tag" "^microsoft-edge" "microsoft-edge-stable" "--new-window" "https://www.github.com"; }
+    Mod+V hotkey-overlay-title="VS Code" { spawn "~/.config/niri/scripts/niri-tag" "--output" "HDMI-A-1" "(?i)code" "code"; }
+    Mod+M hotkey-overlay-title="SPlayer" { spawn "~/.config/niri/scripts/niri-tag" "(?i)splayer" "~/.local/share/splayer/SPlayer.AppImage" "--no-sandbox"; }
+    Mod+9 hotkey-overlay-title="OBS" { spawn "~/.config/niri/scripts/niri-tag" "(?i)obs" "obs"; }
+    Mod+0 hotkey-overlay-title="Steam" { spawn "~/.config/niri/scripts/niri-tag" "(?i)steam" "steam"; }
+
+    // super+数字切换工作区, 加 shift 把窗口带过去 (同 dwm tag)
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+Shift+1 { move-column-to-workspace 1; }
+    Mod+Shift+2 { move-column-to-workspace 2; }
+    Mod+Shift+3 { move-column-to-workspace 3; }
+    Mod+Shift+4 { move-column-to-workspace 4; }
+    Mod+Shift+5 { move-column-to-workspace 5; }
+    Mod+Shift+6 { move-column-to-workspace 6; }
+    Mod+Shift+7 { move-column-to-workspace 7; }
+    Mod+Shift+8 { move-column-to-workspace 8; }
+
+    // super+滚轮切工作区 (同 dwm), 加 shift 左右切列, 再加 ctrl 移动
+    Mod+WheelScrollDown hotkey-overlay-title="滚轮切换工作区 Change workspaces" cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp         cooldown-ms=150 { focus-workspace-up; }
+    Mod+Ctrl+WheelScrollDown  cooldown-ms=150 { move-column-to-workspace-down; }
+    Mod+Ctrl+WheelScrollUp    cooldown-ms=150 { move-column-to-workspace-up; }
+    Mod+Shift+WheelScrollDown hotkey-overlay-title="滚轮切换聚焦 Change focus with wheel" { focus-column-right; }
+    Mod+Shift+WheelScrollUp        { focus-column-left; }
+    Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
+    Mod+Ctrl+Shift+WheelScrollUp   { move-column-left; }
+
+    // 音量 (swayosd 显示提示, 没有时退回 wpctl). allow-when-locked 让锁屏时也能用
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "swayosd-client --output-volume +5||wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "swayosd-client --output-volume -5||wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05-"; }
+    XF86AudioMute        allow-when-locked=true { spawn-sh "swayosd-client --output-volume mute-toggle||wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    // 媒体键
+    XF86AudioPlay  allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioPause allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioNext  allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioPrev  allow-when-locked=true { spawn "playerctl" "previous"; }
+    // 屏幕亮度
+    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "+5%"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "5%-"; }
+
+    // ======================== niri 独有的部分 ========================
+
+    Mod+Alt+W hotkey-overlay-title="切换壁纸 Change wallpaper" {spawn "waypaper";}
+    Mod+Alt+M hotkey-overlay-title="切换颜色策略 Change color strategy" {spawn "~/.config/scripts/matugen-select-type.sh";}
+    Mod+Alt+T hotkey-overlay-title="切换颜色策略 Change color strategy" {spawn "~/.config/scripts/matugen-select-type.sh";}
+    Mod+F10 hotkey-overlay-title="随机切换壁纸 Random wallpaper" {spawn "waypaper" "--random";}
+    Mod+Shift+F10 hotkey-overlay-title="随机下载动漫壁纸 Random download anime wallpaper" {spawn "~/.config/scripts/random-anime-wallpaper.sh";}
+    Mod+F1 hotkey-overlay-title="开关输入法 Toggle fcitx" {spawn-sh "pkill fcitx5 || fcitx5 -d";}
+    Mod+F2 hotkey-overlay-title=null  {spawn-sh "pkill cava || true && pkill waybar || true && waybar -c $HOME/.config/waybar/config.jsonc -s $HOME/.config/waybar/style.css ";}
+    Mod+F3  hotkey-overlay-title=null {spawn-sh "pkill cava || true && pkill waybar || true &&  waybar -c $HOME/.config/waybar-niri-Win11Like/config.jsonc -s $HOME/.config/waybar-niri-Win11Like/style.css ";}
+    // 关闭waybar进程，释放资源占用。在意资源占用的时候使用。
+    Mod+F4 hotkey-overlay-title="开关任务栏 Toggle bar" {spawn-sh "pkill waybar && pkill cava || waybar ";}
+    Mod+F5 hotkey-overlay-title="快速存档 Quick save" {spawn "quicksave";}
+    Mod+F8 hotkey-overlay-title="快速读档 Quick load" {spawn "quickload";}
+    Mod+F12 hotkey-overlay-title="截取所有显示器 Screenshot All Monitor"  {spawn-sh "grim - | wl-copy & pw-play /usr/share/sounds/freedesktop/stereo/camera-shutter.oga ";}
+
+    // 以下功能需要安装nirius并启动niriusd
+    Mod+Ctrl+G hotkey-overlay-title="切换工作区时自动跟随 Follow when switch workspaces" {spawn "nirius" "toggle-follow-mode" ;}
+    Mod+Shift+Q hotkey-overlay-title="快速聚焦到QQ Quick focus QQ" {spawn "nirius" "focus" "--app-id" "QQ" ;}
+    Mod+Shift+W hotkey-overlay-title="快速聚焦到微信 Quick focus Wechat" {spawn "nirius" "focus" "--app-id" "wechat" ;}
+
+    //niri-shorin-fork 放大镜
+    Mod+Alt+WheelScrollUp hotkey-overlay-title="滚轮放大屏幕 magnifier"  { adjust-magnifier-zoom 0.2; }
+    Mod+Alt+WheelScrollDown hotkey-overlay-title="滚轮缩小屏幕 magnifier" { adjust-magnifier-zoom -0.2; }
+    Mod+Shift+Z  hotkey-overlay-title="切换屏幕缩放效果 magnifier" { toggle-magnifier; }
+
+    // 另一个文件管理器 (同时装了 thunar 和 nautilus 时用)
+    Mod+Alt+E hotkey-overlay-title=null {spawn "env" "GSK_RENDERER=gl" "nautilus" "--new-window";}
+    // 剪贴板 TUI，对应aur包cliphist-tui-git
+    Mod+Alt+V hotkey-overlay-title="剪贴板 Clipboard" repeat=false {spawn-sh "kitty --single-instance --class cliphist-tui -e cliphist-tui";}
+
+    Alt+F4  hotkey-overlay-title="强制杀死窗口 Force kill -9 window" repeat=false { spawn "~/.config/niri/scripts/niri-force-kill-window"; }
+    Alt+Shift+F4  hotkey-overlay-title="强制杀死窗口以及关联进程 Force kill -9 a window tree" repeat=false { spawn "~/.config/niri/scripts/niri-force-kill-window" "-f"; }
+    // mod+鼠标中键 关闭窗口
+    Mod+MouseMiddle  { close-window; }
+
+    // 第一列 / 最后一列
+    Mod+Home { focus-column-first; }
+    Mod+End  { focus-column-last; }
+    Mod+Ctrl+Home { move-column-to-first; }
+    Mod+Ctrl+End  { move-column-to-last; }
+    Mod+Page_Down hotkey-overlay-title=null     { focus-workspace-down; }
+    Mod+Page_Up hotkey-overlay-title=null       { focus-workspace-up; }
+    Mod+Ctrl+Page_Down hotkey-overlay-title=null { move-column-to-workspace-down; }
+    Mod+Ctrl+Page_Up hotkey-overlay-title=null  { move-column-to-workspace-up; }
+
+    // mod+左右方括号 把窗口移进/移出相邻的列
+    Mod+BracketLeft  hotkey-overlay-title="窗口移进/移出左边的列 Consume or expel left" { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+    // mod+鼠标侧键 上下切换聚焦
+    Mod+MouseForward { focus-window-up; }
+    Mod+MouseBack    { focus-window-down; }
+
+    // 按预设切换宽度 / 高度
+    Mod+Ctrl+R  hotkey-overlay-title="按预设切换宽度 Switch width" { switch-preset-column-width; }
+    Mod+Ctrl+Shift+R  { switch-preset-window-height; }
+    // 增加窗口宽度占满空闲空间
+    Mod+Ctrl+F { expand-column-to-available-width; }
+    // 居中当前列
+    Mod+Ctrl+C hotkey-overlay-title="居中当前列 Center column" { center-column; }
+
+    // 截图相关 (截图前创建一个用来触发截图音效进程的token)
+    Mod+Alt+A  hotkey-overlay-title=null {spawn-sh "niri msg action screenshot --show-pointer false && pkill -f -USR1 screenshot-sound.sh";}
+    Mod+Alt+Ctrl+A  hotkey-overlay-title="截取聚焦窗口 Focus-window screenshot" { spawn-sh "niri msg action screenshot-window && pkill -f -USR1 screenshot-sound.sh"; }
+    Mod+Alt+Ctrl+Shift+A  hotkey-overlay-title="截取显示器 Monitor screenshot" { spawn-sh "niri msg action screenshot-screen --show-pointer false && pkill -f -USR1 screenshot-sound.sh"; }
+    Print  hotkey-overlay-title=null {spawn-sh "niri msg action screenshot --show-pointer false && pkill -f -USR1 screenshot-sound.sh";}
+    Ctrl+Print  hotkey-overlay-title=null { spawn-sh "niri msg action screenshot-window --show-pointer false && pkill -f -USR1 screenshot-sound.sh"; }
+    Shift+Print  hotkey-overlay-title=null { spawn-sh "niri msg action screenshot-screen --show-pointer false && pkill -f -USR1 screenshot-sound.sh"; }
+    Mod+Shift+S  hotkey-overlay-title="截图后按下此键进行编辑 Edit the image after screenshot" { spawn-sh "wl-paste | satty -f -";}
+
+    // Applications such as remote-desktop clients and software KVM switches may
+    // request that niri stops processing the keyboard shortcuts defined here.
+    // The allow-inhibiting=false property ensures niri always processes this one.
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+    // The quit action will show a confirmation dialog to avoid accidental exits.
+    Mod+Shift+E hotkey-overlay-title="退出niri Quit niri" { quit; }
+}
