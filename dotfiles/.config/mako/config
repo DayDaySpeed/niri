@@ -11,3 +11,7 @@ font=adwaita sans regular 11
 history=1
 max-visible=20
 max-history=100
+
+# 勿扰 (Super+P 菜单): makoctl mode -t do-not-disturb 切换, 通知只进历史不弹出
+[mode=do-not-disturb]
+invisible=1

@@ -1,27 +1,27 @@
 layout{
     focus-ring{
-        active-gradient from="#9bcbffcc" to="#bec3facc" angle=135
+        active-gradient from="#dfbfbecc" to="#e6bdbccc" angle=135
         urgent-color "#ffb4ab"
 
         }
 }
 recent-windows {
     highlight {
-        active-color "#333a42"
+        active-color "#3c3838"
         urgent-color "#ffb4ab"
     }
 }
 // 内置screencast portal选择器的配色
 screen-cast-picker {
-    background-color "#192028"
-    accent-color "#9bcbff"
-    text-color "#dce3ee"
-    accent-text-color "#003256"
+    background-color "#221f1f"
+    accent-color "#dfbfbe"
+    text-color "#e9e1e0"
+    accent-text-color "#402b2b"
 }
 grid-overview {
     minimized-highlight {
         // off
-        color "#b8c6eacc"
-        urgent-color "#9bcbffcc"
+        color "#d7c1c1cc"
+        urgent-color "#dfbfbecc"
     }
 }
