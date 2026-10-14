@@ -1,18 +1,13 @@
 // --- NIRI BLUR START ---
 // 顶层的blur配置，细节调整blur的效果
 blur {
-    passes 3
-    offset 3
+    passes 4
+    offset 4
     noise 0.02
-    saturation 1.5
+    // 1.0 = 不放大壁纸色彩，避免窗口被壁纸染色
+    saturation 1.0
 }
-// 全局窗口规则。让所有普通窗口以xray的形式显示blur。xray仅渲染一次模糊版本的背景，然后将其以类似“壁纸”的形式显示在窗口后面，不是实时渲染模糊，所以完全没有性能消耗。
-window-rule {
-    background-effect {
-        xray true
-        blur true
-    }
-}
+// 普通窗口不再透视壁纸（原先全局 xray blur 会让壁纸颜色渗进所有窗口）。毛玻璃只保留给浮动窗口、启动器和文件管理器。
 // 浮动窗口禁用xray可以实时渲染模糊效果但是性能消耗高，开启xray会穿过浮动窗口底下的窗口直接透视到桌面。看个人喜好选择禁用与否吧。
 window-rule {
     match is-floating=true
