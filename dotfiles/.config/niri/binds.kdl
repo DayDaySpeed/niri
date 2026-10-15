@@ -137,7 +137,7 @@ binds {
     Mod+V hotkey-overlay-title="VS Code" { spawn "~/.config/niri/scripts/niri-tag" "--output" "HDMI-A-1" "(?i)code" "code"; }
     Mod+M hotkey-overlay-title="SPlayer" { spawn "~/.config/niri/scripts/niri-tag" "(?i)splayer" "~/.local/share/splayer/SPlayer.AppImage" "--no-sandbox"; }
     Mod+9 hotkey-overlay-title="OBS" { spawn "~/.config/niri/scripts/niri-tag" "(?i)obs" "obs"; }
-    Mod+0 hotkey-overlay-title="Steam" { spawn "~/.config/niri/scripts/niri-tag" "(?i)steam" "steam"; }
+    Mod+0 hotkey-overlay-title="Steam" { spawn "~/.config/niri/scripts/niri-tag" "--workspace" "steam" "(?i)steam" "steam"; }
 
     // super+数字切换工作区, 加 shift 把窗口带过去 (同 dwm tag)
     Mod+1 { focus-workspace 1; }

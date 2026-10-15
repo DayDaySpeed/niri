@@ -108,7 +108,7 @@
 | ★ `Mod+V` | VS Code |
 | ★ `Mod+M` | SPlayer 音乐播放器 |
 | ★ `Mod+9` | OBS |
-| ★ `Mod+0` | Steam |
+| ★ `Mod+0` | Steam（专属 steam 工作区，好友列表和游戏也开在那里） |
 | `Mod+Shift+Q` | 聚焦 QQ（只聚焦，不启动） |
 | `Mod+Shift+W` | 聚焦微信（只聚焦，不启动） |
 
