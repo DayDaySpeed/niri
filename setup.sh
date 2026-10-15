@@ -146,8 +146,14 @@ system() {
     if [ "$(getent passwd "$U" | cut -d: -f7)" != /usr/bin/zsh ] && [ -x /usr/bin/zsh ]; then
         sudo chsh -s /usr/bin/zsh "$U"
     fi
+    # 多用户共享的 Steam 库 (见 docx/05-troubleshooting.md): 有这个目录才装
+    if [ -d /games/SteamLibrary ]; then
+        put_etc system/steam-library-perms.service /etc/systemd/system/steam-library-perms.service 644
+        put_etc system/steam-library-perms.path /etc/systemd/system/steam-library-perms.path 644
+    fi
     sudo systemctl daemon-reload
     sudo systemctl enable NetworkManager.service bluetooth.service
+    [ -d /games/SteamLibrary ] && sudo systemctl enable --now steam-library-perms.path steam-library-perms.service
 }
 
 # 这些文件里有家目录的绝对路径, 项目里写成 @HOME@: deploy 时展开, pull 时换回

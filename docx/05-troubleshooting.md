@@ -54,3 +54,11 @@ VSCode 命令行读到了 `code-flags.conf` 里的 Wayland 参数，警告无害
 - 应用快捷键（`Mod+C`、`Mod+V` 等）用的是 `niri-tag` 脚本，需要 `python3`。
 - 远程桌面等程序可能会暂停快捷键，按 `Mod+Escape` 恢复。
 - `Mod+F5` / `Mod+F8` 快速存档需要 btrfs + snapper，ext4 上无效。
+
+## 多个用户共享 Steam 库，另一个用户的游戏打不开
+
+共享库 `/games/SteamLibrary` 归 `games` 组（setgid + 默认 ACL `g:games:rwx`），两个用户都在 `games` 组里。
+
+- 日志 `~/.local/share/Steam/logs/console-linux.txt` 里有 `pressure-vessel-wrap: E: openat(.../files/.ref): Permission denied`：Steam 写进来的文件是 755/644，ACL 的 mask 跟着变成 `r-x`，组写权限没了。`./setup.sh system` 会装 `steam-library-perms.path`，库里有变动时自动放开组写权限；手动修一次：`sudo systemctl start steam-library-perms.service`。
+- Proton 游戏的 Wine 前缀（`compatdata/<AppID>/pfx`）只能给所有者用。另一个用户在游戏属性的启动选项里换成自己的前缀：`STEAM_COMPAT_DATA_PATH=/home/<用户名>/.local/share/Steam/steamapps/compatdata/<AppID> %command%`。
+- 不要两个用户的 Steam 同时开着。

@@ -1,0 +1,15 @@
+# 多用户共享的 Steam 库 /games/SteamLibrary: 把被 Steam 写成 755/644 的文件重新放开组写权限
+# (ACL 的 mask 跟着组权限走, 组没写权限时 group:games:rwx 也只剩 r-x, 另一个用户就启动不了游戏)
+[Unit]
+Description=Fix group permissions of the shared Steam library
+ConditionPathIsDirectory=/games/SteamLibrary
+
+[Service]
+Type=oneshot
+Nice=19
+IOSchedulingClass=idle
+# 跳过符号链接 (chgrp/chmod 会作用到链接目标, 悬空的还会报错) 和 pressure-vessel 每次启动临时建的 var/tmp-*
+ExecStart=/usr/bin/find /games/SteamLibrary -path "*/SteamLinuxRuntime*/var/*" -prune -o ! -type l ( ! -group games -o -type d ! -perm -g=rwx -o -type f ! -perm -g=rw ) -exec chgrp games {} + -exec chmod g+rwX {} +
+
+[Install]
+WantedBy=multi-user.target

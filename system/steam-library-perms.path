@@ -1,0 +1,13 @@
+# inotify 不递归: 盯住 steamapps 这几层. 安装 / 更新 / 移动完成时 Steam 会重写 steamapps 下的 appmanifest_*.acf, 足以触发
+[Unit]
+Description=Watch the shared Steam library for new files
+
+[Path]
+PathChanged=/games/SteamLibrary/steamapps
+PathChanged=/games/SteamLibrary/steamapps/common
+PathChanged=/games/SteamLibrary/steamapps/compatdata
+PathChanged=/games/SteamLibrary/steamapps/shadercache
+Unit=steam-library-perms.service
+
+[Install]
+WantedBy=multi-user.target
