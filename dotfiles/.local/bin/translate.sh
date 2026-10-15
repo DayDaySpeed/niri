@@ -4,9 +4,14 @@
 #   translate.sh input      弹出 fuzzel 输入框, 翻译输入的文字, 并把译文复制到剪贴板 (Super + Shift + Y)
 
 export LC_ALL=C.UTF-8
-NID=9530    # 通知 id: 新通知替换旧通知, 不会堆叠
+# 上一条翻译通知的 id (notify-send -p 打印) 记在这里: 新通知替换旧通知, 不会堆叠
+NID_FILE=${XDG_RUNTIME_DIR:-/tmp}/translate-notify-id
 
-notify() { notify-send -r $NID -t "${3:-15000}" "$1" "$2"; }
+notify() {
+    local id
+    id=$(notify-send -p -r "$(cat "$NID_FILE" 2>/dev/null || echo 0)" -t "${3:-15000}" "$1" "$2")
+    echo "$id" > "$NID_FILE"
+}
 # mako 开启了 markup, 译文中的 & < > 需要转义
 escape() { sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'; }
 
@@ -27,4 +32,4 @@ result=$(trans -b -no-autocorrect ":$target" "$text" 2>/dev/null)
 
 [ "$1" = input ] && printf '%s' "$result" | wl-copy
 notify "󰗊 $( [ $target = en ] && echo 中 → 英 || echo 英 → 中 )$( [ "$1" = input ] && echo ' (已复制)')" \
-    "$(printf '%s' "$text" | head -c 300 | escape)\n\n<b>$(printf '%s' "$result" | escape)</b>"
+    "<b>$(printf '%s' "$result" | escape)</b>\n\n$(printf '%s' "$text" | head -c 300 | escape)"

@@ -1,13 +1,25 @@
 #!/usr/bin/env bash
-# 仿 dwm 的应用 tag (TAGKEYS): niri-tag [--output <显示器>] <app-id 正则> <启动命令>
+# 仿 dwm 的应用 tag (TAGKEYS): niri-tag [--output <显示器>] [--workspace <名字>] <app-id 正则> <启动命令>
 #   应用已经开着: 跳到它的窗口 (被 Super+I 隐藏了就取消隐藏)
 #   已经聚焦在它上面: 有多个窗口就轮流跳, 只有一个则不动
 #   没开: 跳到当前显示器最下面的空工作区, 在那里启动, 不挤进当前工作区
 # 可选 --output <显示器>: 没开时到这块屏的空工作区启动 (屏不存在则用当前屏)
-output=
-[ "$1" = --output ] && { output=$2; shift 2; }
+# 可选 --workspace <名字>: 没开时到这个命名工作区启动; 还没有就把最下面的空工作区起这个名字
+#   (配合 window-rule 的 open-on-workspace, 让应用的所有窗口都开在这里)
+output= wsname=
+while :; do
+    case $1 in
+        --output) output=$2; shift 2 ;;
+        --workspace) wsname=$2; shift 2 ;;
+        *) break ;;
+    esac
+done
 re=$1; shift
 cmd=$*
+
+ws_exists() {
+    niri msg -j workspaces | python3 -c 'import json, sys; sys.exit(not any(w["name"] == sys.argv[1] for w in json.load(sys.stdin)))' "$wsname"
+}
 
 cur=$(niri msg -j workspaces | python3 -c 'import json, sys; print(next(w["id"] for w in json.load(sys.stdin) if w["is_focused"]))')
 
@@ -33,16 +45,24 @@ print(t["id"], int(bool(t["is_minimized"])))
 ' "$re" "$cur")
 
 case $target in
-    none) exit ;;
+    none) [ -n "$wsname" ] && ! ws_exists && niri msg action set-workspace-name "$wsname"; exit ;;
     spawn) ;;
     *)
         [ "$minimized" = 1 ] && niri msg action unminimize-window --id "$target"
         niri msg action focus-window --id "$target"
+        # 应用不是用这个键开的, 还没有命名工作区: 把它现在所在的工作区起名
+        [ -n "$wsname" ] && ! ws_exists && niri msg action set-workspace-name "$wsname"
         exit ;;
 esac
 
 if [ -n "$output" ] && niri msg -j outputs | python3 -c 'import json, sys; sys.exit(sys.argv[1] not in json.load(sys.stdin))' "$output"; then
     niri msg action focus-monitor "$output"
+fi
+
+if [ -n "$wsname" ] && ws_exists; then
+    niri msg action focus-workspace "$wsname"
+    niri msg action spawn-sh -- "$cmd"
+    exit
 fi
 
 # niri 总在每个显示器的最下面保留一个空工作区
@@ -53,4 +73,5 @@ out = next(w["output"] for w in ws if w["is_focused"])
 print(max(w["idx"] for w in ws if w["output"] == out))
 ')
 niri msg action focus-workspace "$last"
+[ -n "$wsname" ] && niri msg action set-workspace-name "$wsname"
 niri msg action spawn-sh -- "$cmd"

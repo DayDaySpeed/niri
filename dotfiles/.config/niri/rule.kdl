@@ -214,6 +214,12 @@ window-rule {
     // block-out-from "screencast"
 }
 
+// Steam 和它启动的游戏都开在 "steam" 工作区 (Super+0 第一次启动 Steam 时创建)
+window-rule {
+    match app-id=r#"^steam(_app_\d+)?$"#
+    open-on-workspace "steam"
+}
+
 // steam好友弹窗修复
 window-rule {
     match app-id="steam" title=r#"^notificationtoasts_\d+_desktop$"#

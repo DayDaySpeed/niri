@@ -5,6 +5,8 @@ icon-border-radius=8
 icons=1
 anchor=top-right
 default-timeout=8000
+# 默认最高 100px, 多行的通知 (比如翻译结果) 会被截掉
+height=400
 margin=10
 padding=10,0
 font=adwaita sans regular 11
