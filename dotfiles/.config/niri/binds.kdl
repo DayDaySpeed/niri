@@ -46,8 +46,8 @@ binds {
     // super+=: 浮动层/平铺层来回切 (同 dwm toggletoplayer)
     Mod+Equal hotkey-overlay-title="浮动/平铺层切换 Toggle floating/tiling focus" { switch-focus-between-floating-and-tiling; }
 
-    // super+tab: 上一个用过的窗口; super+`: 上一个工作区
-    Mod+Tab   hotkey-overlay-title="上一个窗口 Previous window" { focus-window-previous; }
+    // super+tab: 当前工作区里上一个用过的窗口; super+`: 上一个工作区
+    Mod+Tab   hotkey-overlay-title="工作区内上一个窗口 Previous window in workspace" { spawn "~/.config/niri/scripts/niri-tab"; }
     Mod+grave hotkey-overlay-title="上一个工作区 Previous workspace" { focus-workspace-previous; }
     // 带搜索的窗口切换 (带缩略图的切换在 config.kdl 的 recent-windows, 用 alt+tab)
     Mod+Shift+Tab hotkey-overlay-title="快速跳转窗口 Quick window switch menu" { spawn "~/.config/niri/scripts/niri-quick-switch-fuzzel.py"; }

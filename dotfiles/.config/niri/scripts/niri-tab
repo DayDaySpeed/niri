@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Super+Tab: 在当前工作区里回到上一个用过的窗口 (focus-window-previous 不分工作区, 跨工作区用 Super+`)
+# 被 Super+I 隐藏的窗口不算; 工作区里没有别的窗口就不动
+id=$(niri msg -j windows | python3 -c '
+import json, sys
+ws = json.load(sys.stdin)
+f = next((w for w in ws if w["is_focused"]), None)
+if f is None:
+    sys.exit()
+c = [w for w in ws if w["workspace_id"] == f["workspace_id"] and not w["is_focused"] and not w["is_minimized"]]
+if c:
+    ts = lambda w: ((w.get("focus_timestamp") or {}).get("secs", -1), (w.get("focus_timestamp") or {}).get("nanos", 0))
+    print(max(c, key=ts)["id"])
+')
+[ -n "$id" ] && niri msg action focus-window --id "$id"

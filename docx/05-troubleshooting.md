@@ -62,3 +62,14 @@ VSCode 命令行读到了 `code-flags.conf` 里的 Wayland 参数，警告无害
 - 日志 `~/.local/share/Steam/logs/console-linux.txt` 里有 `pressure-vessel-wrap: E: openat(.../files/.ref): Permission denied`：Steam 写进来的文件是 755/644，ACL 的 mask 跟着变成 `r-x`，组写权限没了。`./setup.sh system` 会装 `steam-library-perms.path`，库里有变动时自动放开组写权限；手动修一次：`sudo systemctl start steam-library-perms.service`。
 - Proton 游戏的 Wine 前缀（`compatdata/<AppID>/pfx`）只能给所有者用。另一个用户在游戏属性的启动选项里换成自己的前缀：`STEAM_COMPAT_DATA_PATH=/home/<用户名>/.local/share/Steam/steamapps/compatdata/<AppID> %command%`。
 - 不要两个用户的 Steam 同时开着。
+
+## 打开应用时弹窗要求解锁 "Default Keyring"
+
+tty 自动登录时没有输入密码，gnome-keyring 没法自动解锁带密码的钥匙环。`./setup.sh` 只在还没有钥匙环时创建一个空密码的（不加密，存在 `~/.local/share/keyrings`）。如果已有的钥匙环带密码，就重置一下（里面存的登录信息会丢，应用需要重新登录）：
+
+```bash
+systemctl --user stop gnome-keyring-daemon.service gnome-keyring-daemon.socket
+mv ~/.local/share/keyrings ~/.local/share/keyrings.bak
+./setup.sh deploy        # 会重新创建空密码的钥匙环
+systemctl --user start gnome-keyring-daemon.socket
+```

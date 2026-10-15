@@ -6,7 +6,7 @@
 #   ./setup.sh bootstrap   base-devel git, 开启 multilib, 没有 yay 时从 AUR 编译
 #   ./setup.sh deps        按 packages/*.txt 装包, 按检测到的显卡追加驱动; 装 VSCode / Cursor 扩展和 SPlayer
 #   ./setup.sh system      写 /etc (sudo): tty 自动登录、NVIDIA 设置、zh_CN locale, 登录 shell 改为 zsh, 启用网络和蓝牙
-#   ./setup.sh deploy      把 dotfiles/ 复制到 ~ (覆盖同名文件, 不删别的), 设置 GTK 深色主题
+#   ./setup.sh deploy      把 dotfiles/ 复制到 ~ (覆盖同名文件, 不删别的), 设置 GTK 深色主题, 没有钥匙环时建一个空密码的
 #   ./setup.sh pull        反过来: 把 ~ 里改过的、dotfiles/ 里已有的文件拷回项目
 #   ./setup.sh check       只读体检: 包、自动登录、系统配置、niri 配置、私密数据, 每项打印 ✓ / ✗
 # 环境变量: NIRI_TTY=2 在 tty2 自动登录并启动 niri (默认 tty1; tty1 已被别的桌面占用时用)
@@ -179,6 +179,15 @@ deploy() {
     chmod 700 "$HOME"                                 # rsync 会把 stage 目录的 755 带过来
     [ -f ~/.config/zsh/local.zsh ] || { cp dotfiles/.config/zsh/local.zsh.example ~/.config/zsh/local.zsh; echo "  已创建 ~/.config/zsh/local.zsh (按需填写)"; }
     LANG=en_US.UTF-8 LANGUAGE=en_US xdg-user-dirs-update --force
+    # tty 自动登录没有密码去解锁 gnome-keyring, 应用一读钥匙环就弹窗要密码: 还没有钥匙环时建一个空密码 (不加密) 的
+    if ! compgen -G "$HOME/.local/share/keyrings/*.keyring" >/dev/null; then
+        mkdir -p -m 700 ~/.local/share/keyrings
+        (umask 077
+         printf '[keyring]\ndisplay-name=Default keyring\nctime=0\nmtime=0\nlock-on-idle=false\nlock-after=false\n' \
+             > ~/.local/share/keyrings/Default_keyring.keyring
+         printf 'Default_keyring' > ~/.local/share/keyrings/default)
+        echo "  已创建空密码的默认钥匙环"
+    fi
     # GTK 深色主题 + 中键粘贴 (新版 GNOME 默认关闭了它): 会话在跑就直接写进 dconf, 否则临时起一个总线
     local cmds='gsettings set org.gnome.desktop.interface color-scheme prefer-dark
                 gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark
