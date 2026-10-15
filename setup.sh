@@ -179,9 +179,10 @@ deploy() {
     chmod 700 "$HOME"                                 # rsync 会把 stage 目录的 755 带过来
     [ -f ~/.config/zsh/local.zsh ] || { cp dotfiles/.config/zsh/local.zsh.example ~/.config/zsh/local.zsh; echo "  已创建 ~/.config/zsh/local.zsh (按需填写)"; }
     LANG=en_US.UTF-8 LANGUAGE=en_US xdg-user-dirs-update --force
-    # GTK 深色主题: 会话在跑就直接写进 dconf, 否则临时起一个总线
+    # GTK 深色主题 + 中键粘贴 (新版 GNOME 默认关闭了它): 会话在跑就直接写进 dconf, 否则临时起一个总线
     local cmds='gsettings set org.gnome.desktop.interface color-scheme prefer-dark
                 gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark
+                gsettings set org.gnome.desktop.interface gtk-enable-primary-paste true
                 gsettings set org.gnome.desktop.wm.preferences button-layout minimize,maximize,close'
     if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then sh -c "$cmds"
     else dbus-run-session sh -c "$cmds"; fi
